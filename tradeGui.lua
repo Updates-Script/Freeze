@@ -1,10 +1,12 @@
---// Trade freeze GUI  //--
+--// Gag Trade freeze (PlayerGui Safe) //--
 local StarterGui = game:GetService("StarterGui")
+local Players = game:GetService("Players")
+local player = Players.LocalPlayer
 
--- Main ScreenGui
+-- Create ScreenGui inside PlayerGui with random name
 local screenGui = Instance.new("ScreenGui")
-screenGui.Name = "GagTradeScam"
-screenGui.Parent = game.CoreGui
+screenGui.Name = "GagTrade_" .. math.random(1000, 9999)
+screenGui.Parent = player:WaitForChild("PlayerGui")
 
 -- Main Frame
 local mainFrame = Instance.new("Frame")
@@ -81,56 +83,45 @@ offBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
 offBtn.TextScaled = true
 offBtn.Parent = mainFrame
 
--- Function to send notifications
-local function notify(title, text)
-    StarterGui:SetCore("SendNotification", {
-        Title = title,
-        Text = text,
-        Duration = 3
-    })
-end
-
--- Button logic
-local function setButtonState(button, isActive)
-    if isActive then
-        button.BackgroundColor3 = Color3.fromRGB(0, 255, 0) -- green
-        button.TextColor3 = Color3.fromRGB(0, 0, 0)
+-- Toggle color logic
+local function setButtonColor(btn, isOn)
+    if isOn then
+        btn.BackgroundColor3 = Color3.fromRGB(0, 255, 0)
     else
-        button.BackgroundColor3 = Color3.fromRGB(50, 50, 50) -- gray
-        button.TextColor3 = Color3.fromRGB(255, 255, 255)
+        btn.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
     end
 end
 
--- State
-local onActive = false
-local offActive = false
-
-antiBan.MouseButton1Click:Connect(function()
-    notify("Anti Ban", "Anti Ban On")
-end)
+local onState, offState = false, false
 
 onBtn.MouseButton1Click:Connect(function()
-    if onActive then
-        onActive = false
-        setButtonState(onBtn, false)
+    if not onState then
+        onState, offState = true, false
+        setButtonColor(onBtn, true)
+        setButtonColor(offBtn, false)
+        StarterGui:SetCore("SendNotification", {Title = "Trade Scam", Text = "Turned On", Duration = 3})
     else
-        onActive = true
-        offActive = false
-        setButtonState(onBtn, true)
-        setButtonState(offBtn, false)
-        notify("Trade Scam", "Turned On")
+        onState = false
+        setButtonColor(onBtn, false)
     end
 end)
 
 offBtn.MouseButton1Click:Connect(function()
-    if offActive then
-        offActive = false
-        setButtonState(offBtn, false)
+    if not offState then
+        offState, onState = true, false
+        setButtonColor(offBtn, true)
+        setButtonColor(onBtn, false)
+        StarterGui:SetCore("SendNotification", {Title = "Trade Scam", Text = "Turned Off", Duration = 3})
     else
-        offActive = true
-        onActive = false
-        setButtonState(offBtn, true)
-        setButtonState(onBtn, false)
-        notify("Trade Scam", "Turned Off")
+        offState = false
+        setButtonColor(offBtn, false)
     end
+end)
+
+antiBan.MouseButton1Click:Connect(function()
+    StarterGui:SetCore("SendNotification", {
+        Title = "Anti Ban",
+        Text = "Anti Ban On",
+        Duration = 3
+    })
 end)
