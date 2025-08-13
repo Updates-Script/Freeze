@@ -1,4 +1,4 @@
---// Gag Trade Scam GUI (Prank Visual Only) //--
+--// Trade freeze GUI  //--
 local StarterGui = game:GetService("StarterGui")
 
 -- Main ScreenGui
